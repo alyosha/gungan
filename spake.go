@@ -19,13 +19,22 @@ func (jj *JarJar) normalizeText(raw string) string {
 }
 
 func (jj *JarJar) translateText(translationStr string) string {
+	return jj.swapSuffixes(
+		jj.swapTerms(translationStr),
+	)
+}
+
+func (jj *JarJar) swapTerms(translationStr string) string {
 	for rgx, entry := range jj.dictionary.terms {
 		if len(entry.dependencies) > 0 && hasDependencyClash(translationStr, entry.dependencies) {
 			continue
 		}
 		translationStr = rgx.ReplaceAllString(translationStr, fmt.Sprintf("${1}%s${3}", entry.gunganeseTerm))
 	}
+	return translationStr
+}
 
+func (jj *JarJar) swapSuffixes(translationStr string) string {
 	splitWords := strings.Split(translationStr, " ")
 
 	for i, word := range splitWords {
