@@ -25,7 +25,7 @@ func (jj *JarJar) translateText(englishText string) string {
 	for pattern, gunganeseTerm := range jj.dictionary.firstTier {
 		if pattern.MatchString(englishText) {
 			firstTierMatches = append(firstTierMatches, gunganeseTerm)
-			translatedText = pattern.ReplaceAllString(translatedText, gunganeseTerm)
+			translatedText = pattern.ReplaceAllString(translatedText, fmt.Sprintf("${1}%s${3}", gunganeseTerm))
 		}
 	}
 
@@ -39,7 +39,7 @@ func (jj *JarJar) translateText(englishText string) string {
 		if skip {
 			continue
 		}
-		translatedText = pattern.ReplaceAllString(translatedText, gunganeseTerm)
+		translatedText = pattern.ReplaceAllString(translatedText, fmt.Sprintf("${1}%s${3}", gunganeseTerm))
 	}
 
 	splitWords := strings.Split(translatedText, " ")

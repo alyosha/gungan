@@ -8,7 +8,7 @@ import (
 	"github.com/client9/misspell"
 )
 
-const matchingPattern = `(?i)\b%s\b`
+const matchingPattern = `(?i)(\s|^)(%s)(\s|$)`
 
 type lexicon struct {
 	firstTier  map[*regexp.Regexp]string
