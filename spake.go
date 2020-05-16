@@ -30,10 +30,14 @@ func (jj *JarJar) translateText(englishText string) string {
 	}
 
 	for pattern, gunganeseTerm := range jj.dictionary.secondTier {
+		var skip bool
 		for _, match := range firstTierMatches {
 			if pattern.MatchString(match) {
-				continue
+				skip = true
 			}
+		}
+		if skip {
+			continue
 		}
 		translatedText = pattern.ReplaceAllString(translatedText, gunganeseTerm)
 	}
