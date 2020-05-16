@@ -18,31 +18,15 @@ func (jj *JarJar) normalizeText(raw string) string {
 	return normalizedText
 }
 
-func (jj *JarJar) translateText(englishText string) string {
-	translatedText := englishText
-
-	var firstTierMatches []string
-	for pattern, gunganeseTerm := range jj.dictionary.firstTier {
-		if pattern.MatchString(englishText) {
-			firstTierMatches = append(firstTierMatches, gunganeseTerm)
-			translatedText = pattern.ReplaceAllString(translatedText, fmt.Sprintf("${1}%s${3}", gunganeseTerm))
-		}
-	}
-
-	for pattern, gunganeseTerm := range jj.dictionary.secondTier {
-		var skip bool
-		for _, match := range firstTierMatches {
-			if pattern.MatchString(match) {
-				skip = true
-			}
-		}
-		if skip {
+func (jj *JarJar) translateText(translationStr string) string {
+	for rgx, entry := range jj.dictionary.terms {
+		if len(entry.dependencies) > 0 && hasDependencyClash(translationStr, entry.dependencies) {
 			continue
 		}
-		translatedText = pattern.ReplaceAllString(translatedText, fmt.Sprintf("${1}%s${3}", gunganeseTerm))
+		translationStr = rgx.ReplaceAllString(translationStr, fmt.Sprintf("${1}%s${3}", entry.gunganeseTerm))
 	}
 
-	splitWords := strings.Split(translatedText, " ")
+	splitWords := strings.Split(translationStr, " ")
 
 	for i, word := range splitWords {
 		processedWord := word
@@ -56,4 +40,13 @@ func (jj *JarJar) translateText(englishText string) string {
 	}
 
 	return strings.Join(splitWords, " ")
+}
+
+func hasDependencyClash(translatedText string, dependencies []dictionaryEntry) bool {
+	for _, dep := range dependencies {
+		if dep.rgx.MatchString(translatedText) {
+			return true
+		}
+	}
+	return false
 }

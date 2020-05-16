@@ -11,9 +11,15 @@ import (
 const matchingPattern = `(?i)(\s|^)(%s)(\s|$)`
 
 type lexicon struct {
-	firstTier  map[*regexp.Regexp]string
-	secondTier map[*regexp.Regexp]string
-	suffixes   map[string]string
+	terms    map[*regexp.Regexp]dictionaryEntry
+	suffixes map[string]string
+}
+
+type dictionaryEntry struct {
+	englishTerm   string
+	gunganeseTerm string
+	rgx           *regexp.Regexp
+	dependencies  []dictionaryEntry
 }
 
 type JarJar struct {
@@ -26,26 +32,36 @@ func NewJarJar(enableTypoTolerance bool) (*JarJar, error) {
 	misspellReplacer := misspell.New()
 
 	rawLex := struct {
-		FirstTier  map[string]string `json:"first_tier"`
-		SecondTier map[string]string `json:"second_tier"`
-		Suffixes   map[string]string `json:"suffixes"`
+		Terms    map[string]string `json:"terms"`
+		Suffixes map[string]string `json:"suffixes"`
 	}{}
 	if err := json.Unmarshal([]byte(englishGunganeseLexicon), &rawLex); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal gunganese dictionary > %w", err)
 	}
 
 	dict := lexicon{
-		firstTier:  map[*regexp.Regexp]string{},
-		secondTier: map[*regexp.Regexp]string{},
-		suffixes:   rawLex.Suffixes,
+		terms:    map[*regexp.Regexp]dictionaryEntry{},
+		suffixes: rawLex.Suffixes,
 	}
 
-	for k, v := range rawLex.FirstTier {
-		dict.firstTier[regexp.MustCompile(fmt.Sprintf(matchingPattern, k))] = v
+	for englishTerm, gunganeseTerm := range rawLex.Terms {
+		rgx := regexp.MustCompile(fmt.Sprintf(matchingPattern, englishTerm))
+		entry := dictionaryEntry{
+			englishTerm:   englishTerm,
+			gunganeseTerm: gunganeseTerm,
+			rgx:           rgx,
+		}
+		dict.terms[rgx] = entry
 	}
 
-	for k, v := range rawLex.SecondTier {
-		dict.secondTier[regexp.MustCompile(fmt.Sprintf(matchingPattern, k))] = v
+	for rgx, associatedEntry := range dict.terms {
+		englishTerm := associatedEntry.englishTerm
+		for _, v := range dict.terms {
+			if englishTerm != v.englishTerm && rgx.MatchString(v.englishTerm) {
+				associatedEntry.dependencies = append(associatedEntry.dependencies, v)
+			}
+		}
+		dict.terms[rgx] = associatedEntry
 	}
 
 	return &JarJar{
