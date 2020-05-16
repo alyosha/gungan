@@ -1,7 +1,7 @@
 ## gungan
 
 gungan is a library for translating English text into Gunganese, the native
-language of JarJar Binks. 
+language of Jar Jar Binks. 
 
 Please refer to the [example directory](example/main.go) for an idea of how to
 use. 
