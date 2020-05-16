@@ -2,8 +2,9 @@ package gungan
 
 const englishGunganeseLexicon = `
 {
-  "first_tier": {
+  "terms": {
     "a lot": "mooie",
+    "a lot of": "mooie",
     "accident": "accidenties",
     "all of you": "all-n youse",
     "all right": "okeeday",
@@ -62,9 +63,7 @@ const englishGunganeseLexicon = `
     "you are": "yousa",
     "you are going": "yous goen",
     "you guys": "all-n youse",
-    "you're going": "yous goen"
-  },
-  "second_tier": {
+    "you're going": "yous goen",
     "accept": "accepten",
     "add": "adden",
     "admire": "admiren",
@@ -85,6 +84,7 @@ const englishGunganeseLexicon = `
     "annoy": "annoyen",
     "answer": "answeren",
     "apologise": "apologisen",
+    "apologize": "apologizen",
     "appear": "appearen",
     "applaud": "applauden",
     "appreciate": "appreciaten",
@@ -580,6 +580,7 @@ const englishGunganeseLexicon = `
     "hurry": "hurryen",
     "i": "mesa",
     "i'm": "mesa",
+    "im": "mesa",
     "icier": "more icy",
     "iciest": "most icy",
     "identify": "identifyen",
@@ -607,7 +608,6 @@ const englishGunganeseLexicon = `
     "inventor": "flupps",
     "invite": "inviten",
     "irritate": "irritaten",
-    "is": "goen",
     "it's": "tis a",
     "itch": "itchen",
     "itchier": "more itchy",
@@ -1186,6 +1186,7 @@ const englishGunganeseLexicon = `
     "thirstiest": "most thirsty",
     "thirsty": "gup gup",
     "this": "disa",
+    "this is": "disa",
     "three": "dee",
     "tick": "ticken",
     "tickle": "ticklen",
@@ -1212,7 +1213,6 @@ const englishGunganeseLexicon = `
     "trick": "tricken",
     "trip": "tripen",
     "trot": "troten",
-    "trouble": "troublen",
     "truer": "more true",
     "truest": "most true",
     "trust": "trusten",
